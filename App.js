@@ -10,8 +10,28 @@ import {
   Keyboard
 } from "react-native";
 
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import TextFiled from './src/components/TextField'
 import Button from './src/components/Button'
+import FirstScreen from './FirstScreen'
+import SecondScreen from './SecondScreen'
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const Test = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="FirstScreen" component={FirstScreen} />
+      <Tab.Screen name="ThirdScreen" component={SecondScreen} />
+    </Stack.Navigator>
+  )
+}
 
 export default function App() {
   const [state, setState] = useState({
@@ -19,51 +39,36 @@ export default function App() {
     age: null
   });
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text>Enter your name</Text>
-
-        <TextFiled
-          name="name"
-          placeholder="name"
-          value={state.name}
-          onChangeText={text => setState({ ...state, name: text })}
-        />
-        <TextFiled
-          placeholder="age"
-          keyboardType="number-pad"
-          name="age"
-          value={state.age}
-          onChangeText={text => setState({ ...state, age: text })}
-        />
-        <Button text="Submit" onPress={() => {
-          if (state.name === "") {
-            return Alert.alert('Please enter your name')
-          }
-          else if (!state.age) {
-            return Alert.alert('Please enter your age')
-          }
-          Alert.alert(`Hello ${state.name} your age is ${state.age}`)
-        }} />
-
-        {/* <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            if (state.name === "") {
-              return Alert.alert('Please enter your name')
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+            if (route.name === "FirstScreen") {
+              iconName = focused ? 'ios-information-circle' : 'ios-information-circle-outline';
+            } else if (route.name === "SecondScreen") {
+              iconName = focused ? 'ios-list-box' : 'ios-list';
+            } else if (route.name === "ThirdScreen") {
+              iconName = focused ? 'play' : 'playcircleo';
             }
-            else if (!state.age) {
-              return Alert.alert('Please enter your age')
-            }
-            Alert.alert(`Hello ${state.name} your age is ${state.age}`)
-          }}
-        >
-          <Text>Click Me</Text>
-        </TouchableOpacity> */}
-      </View>
-    </TouchableWithoutFeedback>
+
+            return <Ionicons name={iconName} size={25} color={color} />;
+          }
+        })}
+        tabBarOptions={{
+          activeTintColor: 'tomato',
+          inactiveTintColor: 'gray',
+
+        }}
+      >
+        <Tab.Screen name="FirstScreen" component={Test} />
+        <Tab.Screen name="SecondScreen" component={SecondScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   container: {
